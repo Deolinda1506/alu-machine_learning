@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 '''This script calculates the Multivers dist and PDF'''
