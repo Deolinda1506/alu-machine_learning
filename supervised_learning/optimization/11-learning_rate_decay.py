@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
     Function def learning_rate_decay
