@@ -32,3 +32,4 @@ def create_batch_norm_layer(prev, n, activation):
 
     # Activation
     return activation(normalized)
+
