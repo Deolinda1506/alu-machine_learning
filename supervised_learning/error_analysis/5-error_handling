@@ -1,21 +1,4 @@
-def find_misclassified(actual, predicted):
-    """
-    Returns the list of labels that were expected but not predicted correctly.
-    """
-    misclassified = []
-    for a, p in zip(actual, predicted):
-        if a != p:
-            for label in a:
-                if label not in p and label not in misclassified:
-                    misclassified.append(label)
-    return misclassified
-
-
-if __name__ == "__main__":
-    actual = [['A', 'B', 'D'], ['A', 'B', 'D'], ['B', 'C', 'E'], ['F']]
-    predicted = [['A', 'B', 'D'], ['A', 'B', 'D'], ['B', 'C', 'E'], []]
-
-    result = find_misclassified(actual, predicted)
-    print(','.join(result))
-
-
+A,B,D
+A,B,D
+B,C,E
+F
