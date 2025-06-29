@@ -1,49 +1,48 @@
 #!/usr/bin/env python3
-"""Script that displays the number of launches per rocket"""
-
+"""Script to count the number of SpaceX launches per rocket."""
 
 import requests
-from collections import defaultdict
 
 
-def get_launches_per_rocket():
-    """Script that displays the number of launches per rocket"""
+def get_rocket_launch_counts():
+    """
+    Count and display the number of launches for each SpaceX rocket.
 
-    launches_url = 'https://api.spacexdata.com/v4/launches'
-    rockets_url = 'https://api.spacexdata.com/v4/rockets'
+    The output format is:
+    <rocket name>: <number of launches>
 
-    try:
-        launches_response = requests.get(launches_url)
-        launches_response.raise_for_status()
-        launches = launches_response.json()
+    Sorted by launch count (descending), then rocket name (A-Z).
+    """
+    # Get all launches
+    launches_url = "https://api.spacexdata.com/v4/launches"
+    launches = requests.get(launches_url).json()
 
-        launch_count = defaultdict(int)
-        for launch in launches:
-            rocket_id = launch['rocket']
-            launch_count[rocket_id] += 1
+    # Count launches per rocket ID
+    rocket_counts = {}
+    for launch in launches:
+        rocket_id = launch.get("rocket")
+        if rocket_id:
+            rocket_counts[rocket_id] = rocket_counts.get(rocket_id, 0) + 1
 
-        rockets_response = requests.get(rockets_url)
-        rockets_response.raise_for_status()
-        rockets = rockets_response.json()
+    # Get rocket ID-to-name mapping
+    rockets_url = "https://api.spacexdata.com/v4/rockets"
+    rockets = requests.get(rockets_url).json()
+    id_to_name = {rocket["id"]: rocket["name"] for rocket in rockets}
 
-        rocket_names = {rocket['id']: rocket['name'] for rocket in rockets}
+    # Build list of (name, count)
+    rocket_list = []
+    for rocket_id, count in rocket_counts.items():
+        name = id_to_name.get(rocket_id, "Unknown")
+        rocket_list.append((name, count))
 
-        rocket_launches = [
-            (rocket_names[rocket_id], count)
-            for rocket_id, count in launch_count.items()
-        ]
+    # Sort by count descending, then name ascending
+    rocket_list.sort(key=lambda x: (-x[1], x[0]))
 
-        rocket_launches.sort(key=lambda x: (-x[1], x[0]))
-
-        for rocket, count in rocket_launches:
-            print("{}: {}".format(rocket, count))
-
-    except requests.RequestException as e:
-        print(
-            'An error occurred while making an API request: {}'.format(e))
-    except Exception as err:
-        print('A general error occurred: {}'.format(err))
+    # Print results
+    for name, count in rocket_list:
+        print("{}: {}".format(name, count))
 
 
-if __name__ == '__main__':
-    get_launches_per_rocket()
+if __name__ == "__main__":
+    get_rocket_launch_counts()
+
