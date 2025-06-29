@@ -1,39 +1,25 @@
 #!/usr/bin/env python3
-"""Script that prints the location of a GitHub user."""
 
-import sys
+
+""" Return list of ships"""
+
 import requests
+import sys
 import time
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        sys.exit(1)
+    res = requests.get(sys.argv[1])
 
-    url = sys.argv[1]
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            print(data.get("location"))
-        elif response.status_code == 404:
-            print("Not found")
-        elif response.status_code == 403:
-            reset_time = response.headers.get("X-RateLimit-Reset")
-            if reset_time is not None:
-                try:
-                    reset_time = int(reset_time)
-                    now = int(time.time())
-                    minutes = int((reset_time - now) / 60)
-                    if minutes < 0:
-                        minutes = 0
-                    print("Reset in {} min".format(minutes))
-                except ValueError:
-                    print("Reset in unknown time")
-            else:
-                print("Reset in unknown time")
-        else:
-            print("Error: HTTP {}".format(response.status_code))
-    except requests.RequestException:
-        print("Network error")
+    if res.status_code == 403:
+        rate_limit = int(res.headers.get('X-Ratelimit-Reset'))
+        current_time = int(time.time())
+        diff = (rate_limit - current_time) // 60
+        print("Reset in {} min".format(diff))
+        # get remaining rate
 
+    elif res.status_code == 404:
+        print("Not found")
+    elif res.status_code == 200:
+        res = res.json()
+        print(res['location'])
