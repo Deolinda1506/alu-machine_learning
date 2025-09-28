@@ -206,4 +206,3 @@ class NST:
 
         self.gram_style_features = gram_style_features
         self.content_feature = content_feature
-        

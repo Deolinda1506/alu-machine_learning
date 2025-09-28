@@ -400,4 +400,3 @@ class NST:
             the variational cost
         """
         return None
-        

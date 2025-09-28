@@ -142,4 +142,3 @@ class NST:
                     self.content_feature.shape))
 
         return tf.reduce_mean(tf.square(content_output - self.content_feature))
-        
